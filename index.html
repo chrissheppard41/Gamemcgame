@@ -1,0 +1,50 @@
+<html>
+<head>
+    <title>Pixi Test</title>
+
+    <link rel="stylesheet" href="./css/ui_style.css"/>
+
+    <script type="text/javascript" src="./js/pixi.js"></script>
+    <script type="text/javascript" src="./js/lib.js"></script>
+    <script type="text/javascript" src="./js/game.js"></script>
+    <script type="text/javascript" src="./js/ui.js"></script>
+    <script type="text/javascript">
+        <!--
+        window.onload = function () {
+
+            var config = {
+                oGameObj : document.getElementById('gameobj'),
+                bg       : 0x66FF99,
+                iWidth   : 1200,
+                iHeight  : 900
+            };
+
+            var ui = new Ui();
+            var game = new Game(config, ui);
+
+            requestAnimFrame( animate );
+
+            function animate () {
+                requestAnimFrame( animate );
+                game._animate();
+
+                ui.renderer.render(ui.stage);
+                game.renderer.render(game.stage);
+            }
+        };
+        -->
+    </script>
+</head>
+<body>
+
+
+<div id="gameobj">
+    <div id="ui_resources">#resources<!-- Displays unit resources --></div>
+    <div id="ui_options">#options<!-- Displays option button --></div>
+    <div id="ui_buttonArea"><!-- Displays the Button area --></div>
+    <div id="ui_unitInfo">#unitinfo<!-- Displays the Unit information --></div>
+    <div id="ui_miniMap">#minimap<!-- Displays the MiniMap --></div>
+</div>
+
+</body>
+</html>

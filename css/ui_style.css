@@ -1,0 +1,85 @@
+#gameobj {
+  height: 900px;
+  position: relative;
+  width: 1200px; }
+  #gameobj #ui_resources {
+    background-color: #eeeeee;
+    height: 30px;
+    left: 50%;
+    line-height: 30px;
+    margin-left: -125px;
+    position: absolute;
+    top: 0px;
+    width: 250px;
+    z-index: 50; }
+  #gameobj #ui_options {
+    background-color: #eeeeee;
+    height: 30px;
+    line-height: 30px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100px;
+    z-index: 50; }
+  #gameobj #ui_buttonArea {
+    background-color: #eeeeee;
+    bottom: 0;
+    height: 250px;
+    position: absolute;
+    right: 0;
+    width: 250px;
+    z-index: 50; }
+  #gameobj #ui_unitInfo {
+    background-color: #eeeeee;
+    bottom: 0;
+    height: 200px;
+    left: 50%;
+    margin-left: -325px;
+    position: absolute;
+    width: 650px;
+    z-index: 50; }
+    #gameobj #ui_unitInfo #ui_unitCont {
+      height: 200px;
+      position: relative;
+      width: 650px; }
+      #gameobj #ui_unitInfo #ui_unitCont #ui_unitImgSection {
+        height: 200px;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 150px; }
+        #gameobj #ui_unitInfo #ui_unitCont #ui_unitImgSection #ui_unitImg {
+          background-color: #aaaaaa;
+          height: 160px;
+          width: 150px; }
+        #gameobj #ui_unitInfo #ui_unitCont #ui_unitImgSection #ui_unitLevel {
+          background-color: #999999;
+          height: 40px;
+          margin: -20px 10px 0 10px;
+          width: 130px; }
+        #gameobj #ui_unitInfo #ui_unitCont #ui_unitImgSection #ui_unitHealth {
+          background-color: #888888;
+          height: 20px;
+          width: 150px; }
+      #gameobj #ui_unitInfo #ui_unitCont #ui_unitInfoSection {
+        height: 200px;
+        left: 150px;
+        position: absolute;
+        top: 0;
+        width: 400px; }
+        #gameobj #ui_unitInfo #ui_unitCont #ui_unitInfoSection #ui_unitName {
+          height: 30px;
+          margin: 20px;
+          width: 360px; }
+        #gameobj #ui_unitInfo #ui_unitCont #ui_unitInfoSection #ui_unitDescr {
+          height: 110px;
+          margin: 20px;
+          width: 360px; }
+  #gameobj #ui_miniMap {
+    background-color: #eeeeee;
+    bottom: 0;
+    height: 250px;
+    left: 0;
+    position: absolute;
+    width: 250px;
+    z-index: 50; }
