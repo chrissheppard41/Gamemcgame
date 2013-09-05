@@ -17,6 +17,8 @@
         buttonSlots:  3
       };
 
+      this.btnArray = [];
+
       //draw the pixi canvas
       if( this._ready() ) {
         // Set up scene
@@ -28,8 +30,7 @@
         this.config.btnArea.appendChild(this.renderer.view);
       }
 
-
-      this._generateGrid(this.config.buttonSlots);
+      this._generateGrid();
     },
     /**
       * public function draw
@@ -39,6 +40,7 @@
       * @return null
       **/
     draw:function (input) {
+      var _this = this;
       //example input:
       /*input = {
         builder: {},
@@ -75,29 +77,29 @@
         //display normal build data
 
         //clear stage and set buttonSlots
-        //this._clearStage();
+        this._clearStage();
         //display buttons
         //slot 1: attack
-        if(input.offense) {console.log("attack");
-          this.btnArray[0][0].disabled = false;
+        if(input.offense) {
+            this.btnArray[1].setVisiablity(true);
+            this.btnArray[1].setButtonAction(function(){_this.displayMenu("ui_notification", "ATTACKKKKKKK");});
         }
         //slot 2: stop
         //slot 3: move
-        if(input.move) {console.log("move");
-          this.btnArray[1][0].disabled = false;
-          this.btnArray[2][0].disabled = false;
+        if(input.move) {
+            this.btnArray[2].setVisiablity(true);
+            this.btnArray[2].setButtonAction(function(){_this.displayMenu("ui_notification", "MOOOVVEEE");});
+            this.btnArray[3].setVisiablity(true);
+            this.btnArray[3].setButtonAction(function(){_this.displayMenu("ui_notification", "STTTOOOPPP");});
         }
         //slot 9: build menu
-        if(Object.keys(input.builder).length > 0) {console.log("build");
-          this.btnArray[2][2].disabled = false;
+        if(Object.keys(input.builder).length > 0) {
+            this.btnArray[9].setVisiablity(true);
+            this.btnArray[9].setButtonAction(function(){_this.displayMenu("ui_notification", "BUUIILLDD");});
         }
 
-        for(var ii = 0; ii < this.config.buttonSlots; ii++) {
-          for(var jj = 0; jj < this.config.buttonSlots; jj++) {
-            if(!this.btnArray[ii][jj].disabled) {
-              this.btnArray[ii][jj].displayBtn(this.stage);
-            }
-          }
+        for (var i = 1, t = this.config.buttonSlots*this.config.buttonSlots+1; i < t; i++) {
+            this.btnArray[i].displayBtn(this.stage);
         }
     },
     /**
@@ -118,16 +120,18 @@
       * _generateGrid
       * Creates new button objects grid within a multidemional array
       *
-      * @param slot (int)
+      * @pete removed @param slot (int) AS this.config.buttonSlots IS GLOBAL
       * @return null
       **/
-    _generateGrid:function(slot) {
-      this.btnArray = [];
+    _generateGrid:function() {
+      var j = 0, k = 0;
+      for (var i = 1, t = this.config.buttonSlots*this.config.buttonSlots+1; i < t; i++) {
+        this.btnArray[i] = new Button(j, k);
 
-      for(var i = 0; i < slot; i++) {
-        this.btnArray[i] = [];
-        for(var j = 0; j < slot; j++) {
-          this.btnArray[i][j] = new Button(i, j);
+        if(i % 3 === 0) {
+          k++; j = 0;
+        } else {
+          j++;
         }
       }
     },
@@ -138,13 +142,18 @@
       * @return null
       **/
     _clearStage: function() {
-      for(var ii = 0; ii < this.config.buttonSlots; ii++) {
-          for(var jj = 0; jj < this.config.buttonSlots; jj++) {
-            console.log("here 1");
-            this.btnArray[ii][jj].disabled = true;
-            this.btnArray[ii][jj].removeBtn(this.stage);
-          }
+        for (var i = 1, t = this.config.buttonSlots*this.config.buttonSlots+1; i < t; i++) {
+            this.btnArray[i].setVisiablity(false);
         }
+    },
+    displayMenu: function(ui_menu, ui_message) {
+        var menu = document.getElementById(ui_menu);
+        if ( !menu ) {
+          console.log("Menu cannot be found!");
+        }
+        menu.innerHTML = ui_message;
+        menu.style.display = "block";
+        //remove the message after a few seconds TO DO
     },
     /**
       * toString
@@ -183,7 +192,6 @@ var Button = Class({
     **/
   initialize: function(posX, posY) {
     this.image        = "./imgs/btn.png";
-    this.disabled     = true;
 
 
     var texture       = PIXI.Texture.fromImage(this.image),
@@ -201,8 +209,18 @@ var Button = Class({
     btn.position.x    = 80 * posX;
     btn.position.y    = 80 * posY;
 
-    this.masterBtn    = btn;
+    btn.visible       = false;
 
+    this.masterBtn    = btn;
+  },
+  setVisiablity: function(vis) {
+    this.masterBtn.visible = vis;
+  },
+  getVisiablity: function() {
+    return this.masterBtn.visible;
+  },
+  setButtonAction: function(func){
+    this.masterBtn.mouseup = func;
   },
   /**
     * mouseDown
@@ -244,23 +262,6 @@ var Button = Class({
     stage.addChild(this.masterBtn);
   },
   /**
-    * removeBtn
-    * Removes button from the canvas stage
-    *
-    * @return null
-    **/
-  removeBtn: function(stage) {
-            console.log("here 2");
-            console.log(stage);
-            console.log(this.masterBtn);
-
-            if(stage.contains(this.masterBtn)) {
-    stage.removeChild(this.masterBtn);
-            }
-
-            console.log("here 3");
-  },
-  /**
     * toString
     * Writes object string to the console
     *
@@ -273,6 +274,46 @@ var Button = Class({
     * actions area
     * Lists the extra functionality for the buttons, this must be as flexable as possible
     */
+  /**
+    * attack
+    * Writes object string to the console
+    *
+    * @return null
+    **/
+  attack: function(data) {
+    this.mouseup(data);
+    console.log("attack");
+  },
+  /**
+    * move
+    * Writes object string to the console
+    *
+    * @return null
+    **/
+  move: function(data) {
+    this.mouseup(data);
+    console.log("move");
+  },
+  /**
+    * stop
+    * Writes object string to the console
+    *
+    * @return null
+    **/
+  stop: function(data) {
+    this.mouseup(data);
+    console.log("stop");
+  },
+    /**
+    * buildOptions
+    * Writes object string to the console
+    *
+    * @return null
+    **/
+  buildOptions: function(data) {
+    this.mouseup(data);
+    console.log("buildOptions");
+  },
 });
 
 //useful to know: array[] = []    ===    multidemional array

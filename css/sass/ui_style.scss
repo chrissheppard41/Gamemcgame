@@ -112,4 +112,17 @@
 
 		z-index: 50;
 	}
+
+
+	#ui_notification {
+		background-color: 	#eeeeee;
+		display:			none;
+		min-height: 		50px;
+		left: 				50%;
+		margin-left: 		-325px;
+		position: 			absolute;
+		top: 				150px;
+		width: 				650px;
+		z-index: 			50;
+	}
 }
