@@ -10,11 +10,14 @@
     initialize: function() {
 
       this.config = {
-        btnArea:      document.getElementById('ui_buttonArea'),
-        iWidth:       250,
-        iHeight:      250,
-        bg:           "#dddddd",
-        buttonSlots:  3
+        resourceArea1:      document.getElementById('ui_resources'),
+        resourceArea2:      document.getElementById('ui_resources2'),
+        btnArea:            document.getElementById('ui_buttonArea'),
+        iWidth:             250,
+        iHeight:            250,
+        bg:                 "#dddddd",
+        buttonSlots:        3,
+        currentSelectedUnit: {}
       };
 
       this.btnArray = [];
@@ -41,16 +44,6 @@
       **/
     draw:function (input) {
       var _this = this;
-      //example input:
-      /*input = {
-        builder: {},
-        unitName: "Test name",
-        unitDesc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vitae quam sit amet sapien hendrerit aliquam.",
-        unitHealth: 200,
-        maxUnitHeath: 200,
-        level: 1,
-        img: "#noimage",
-      };*/
 
       var ui_text = "<div id='ui_unitCont'>" +
                     " <div id='ui_unitImgSection'>" +
@@ -68,39 +61,10 @@
 
       ui_unit.innerHTML = ui_text;
 
-      //console.log(ui_unit);
-        //take input unit object(s)
-        //use that data to:
-        // - Is a builder
-        // - Is a unit
-        // - Is a building
-        //display normal build data
+      //pass the currently selected unit into the system
+      this.config.currentSelectedUnit = input;
 
-        //clear stage and set buttonSlots
-        this._clearStage();
-        //display buttons
-        //slot 1: attack
-        if(input.offense) {
-            this.btnArray[1].setVisiablity(true);
-            this.btnArray[1].setButtonAction(function(){_this.displayMenu("ui_notification", "ATTACKKKKKKK");});
-        }
-        //slot 2: stop
-        //slot 3: move
-        if(input.move) {
-            this.btnArray[2].setVisiablity(true);
-            this.btnArray[2].setButtonAction(function(){_this.displayMenu("ui_notification", "MOOOVVEEE");});
-            this.btnArray[3].setVisiablity(true);
-            this.btnArray[3].setButtonAction(function(){_this.displayMenu("ui_notification", "STTTOOOPPP");});
-        }
-        //slot 9: build menu
-        if(Object.keys(input.builder).length > 0) {
-            this.btnArray[9].setVisiablity(true);
-            this.btnArray[9].setButtonAction(function(){_this.displayMenu("ui_notification", "BUUIILLDD");});
-        }
-
-        for (var i = 1, t = this.config.buttonSlots*this.config.buttonSlots+1; i < t; i++) {
-            this.btnArray[i].displayBtn(this.stage);
-        }
+      this._handleUnitOptions();
     },
     /**
       * _ready
@@ -125,10 +89,10 @@
       **/
     _generateGrid:function() {
       var j = 0, k = 0;
-      for (var i = 1, t = this.config.buttonSlots*this.config.buttonSlots+1; i < t; i++) {
+      for (var i = 0, t = this.config.buttonSlots*this.config.buttonSlots; i < t; i++) {
         this.btnArray[i] = new Button(j, k);
 
-        if(i % 3 === 0) {
+        if((i+1) % 3 === 0) {
           k++; j = 0;
         } else {
           j++;
@@ -142,10 +106,28 @@
       * @return null
       **/
     _clearStage: function() {
-        for (var i = 1, t = this.config.buttonSlots*this.config.buttonSlots+1; i < t; i++) {
+        for (var i = 0, t = this.config.buttonSlots*this.config.buttonSlots; i < t; i++) {
             this.btnArray[i].setVisiablity(false);
         }
     },
+    /**
+      * _clearUI
+      * Clears the unit on a non interactive click
+      *
+      * @return null
+      **/
+    _clearUI: function() {
+      //clear unit
+      //clear ui
+      console.log(clear);
+    },
+    /**
+      * displayMenu
+      * Displays a nofication in the centre of the screen
+      *
+      * @param ui_menu, ui_message
+      * @return null
+      **/
     displayMenu: function(ui_menu, ui_message) {
         var menu = document.getElementById(ui_menu);
         if ( !menu ) {
@@ -153,7 +135,102 @@
         }
         menu.innerHTML = ui_message;
         menu.style.display = "block";
-        //remove the message after a few seconds TO DO
+
+        setTimeout(function(){
+          menu.style.display = "none";
+          menu.innerHTML = "";
+        },3000);
+
+    },
+    /**
+      * handleResources
+      * Displays a the updating resource count
+      *
+      * @param ui_menu, ui_input
+      * @return null
+      **/
+    handleResources: function(ui_input) {
+        if ( !this.config.resourceArea1 ) {
+          console.log("Menu cannot be found!");
+        }
+        this.config.resourceArea1.innerHTML = ui_input;
+    },
+    /**
+      * _handleBuildOptions
+      * Displays the list of buttons and presents a back button to the units options
+      *
+      * @return null
+      **/
+    _handleBuildOptions: function() {
+      var _this = this;
+      this._clearStage();
+
+      //slot 8: back button
+      this.btnArray[8].setVisiablity(true);
+      this.btnArray[8].setButtonAction(function(){
+        _this.btnArray[8].back();
+        _this._handleUnitOptions();
+      });
+
+      for (var i = 0, t = this.config.buttonSlots*this.config.buttonSlots; i < t; i++) {
+        //console.log(this.config.currentSelectedUnit.builder[i]);
+        if(this.config.currentSelectedUnit.builder[i] !== undefined || t < 8) {
+          this.btnArray[i].setVisiablity(true);
+          //fixing the closure loop problem
+          function handler(n) {
+            _this.btnArray[n].setButtonAction(function(){
+              _this.btnArray[n].build(_this.config.currentSelectedUnit.builder[n]);
+            });
+          }
+          handler(i);
+        }
+          this.btnArray[i].displayBtn(this.stage);
+      }
+    },
+    /**
+      * _handleUnitOptions
+      * Displays the list of buttons
+      *
+      * @return null
+      **/
+    _handleUnitOptions: function() {
+      var _this = this;
+      this._clearStage();
+      //do a check for multiple selected units later
+
+
+      //display buttons
+      //slot 0: attack
+      if(this.config.currentSelectedUnit.offense) {
+          this.btnArray[0].setVisiablity(true);
+          this.btnArray[0].setButtonAction(function(){
+            _this.btnArray[0].attack();
+          });
+      }
+      //slot 1: stop
+      //slot 2: move
+      if(this.config.currentSelectedUnit.move) {
+          this.btnArray[1].setVisiablity(true);
+          this.btnArray[1].setButtonAction(function(){
+            _this.btnArray[1].move();
+          });
+          this.btnArray[2].setVisiablity(true);
+          this.btnArray[2].setButtonAction(function(){
+            _this.btnArray[2].stop();
+          });
+      }
+      //slot 8: build menu
+      if(Object.keys(this.config.currentSelectedUnit.builder).length > 0) {
+          this.btnArray[8].setVisiablity(true);
+          this.btnArray[8].setButtonAction(function(){
+            _this.btnArray[8].buildOptions();
+            _this._handleBuildOptions();
+          });
+      }
+
+      for (var i = 0, t = this.config.buttonSlots*this.config.buttonSlots; i < t; i++) {
+          this.btnArray[i].displayBtn(this.stage);
+      }
     },
     /**
       * toString
@@ -192,7 +269,6 @@ var Button = Class({
     **/
   initialize: function(posX, posY) {
     this.image        = "./imgs/btn.png";
-
 
     var texture       = PIXI.Texture.fromImage(this.image),
         btn           = new PIXI.Sprite(texture);
@@ -276,44 +352,77 @@ var Button = Class({
     */
   /**
     * attack
-    * Writes object string to the console
+    * handles the button click
     *
     * @return null
     **/
-  attack: function(data) {
-    this.mouseup(data);
+  attack: function(data, callback) {
     console.log("attack");
+    this.masterBtn.alpha = 1;
+    if(callback instanceof Function)
+      callback();
   },
   /**
     * move
-    * Writes object string to the console
+    * handles the button click
     *
     * @return null
     **/
-  move: function(data) {
-    this.mouseup(data);
+  move: function(data, callback) {
     console.log("move");
+    this.masterBtn.alpha = 1;
+    if(callback instanceof Function)
+      callback();
   },
   /**
     * stop
-    * Writes object string to the console
+    * handles the button click
     *
     * @return null
     **/
-  stop: function(data) {
-    this.mouseup(data);
+  stop: function(data, callback) {
     console.log("stop");
+    this.masterBtn.alpha = 1;
+    if(callback instanceof Function)
+      callback();
   },
     /**
     * buildOptions
-    * Writes object string to the console
+    * handles the button click
     *
     * @return null
     **/
-  buildOptions: function(data) {
-    this.mouseup(data);
+  buildOptions: function(data, callback) {
     console.log("buildOptions");
+    this.masterBtn.alpha = 1;
+    if(callback instanceof Function)
+      callback();
   },
+    /**
+    * back
+    * handles the button click
+    *
+    * @return null
+    **/
+  back: function(data, callback) {
+    console.log("back");
+    this.masterBtn.alpha = 1;
+    if(callback instanceof Function)
+      callback();
+  },
+    /**
+    * build
+    * handles the button click
+    *
+    * @return null
+    **/
+  build: function(data, callback) {
+    console.log("build -> ", data);
+    this.masterBtn.alpha = 1;
+    if(callback instanceof Function)
+      callback();
+
+  }
 });
 
 //useful to know: array[] = []    ===    multidemional array

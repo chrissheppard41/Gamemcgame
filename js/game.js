@@ -75,13 +75,23 @@ var Game = Class({
 
         //buildings
         this._testDragableHead(150, 150, "./imgs/face_building.png", {
-          builder: {
-            slot1: "unit1",
-            slot2: "unit2",
-            slot3: "unit3",
-            slot4: "unit4",
-            slot5: "unit5",
-          },
+          builder: [
+            {
+              unit: "unit1",
+            },
+            {
+              unit: "unit2",
+            },
+            {
+              unit: "unit3",
+            },
+            {
+              unit: "unit4",
+            },
+            {
+              unit: "unit5",
+            }
+          ],
           unitName: "Building name",
           unitDesc: "Fort kick ass",
           unitHealth: 1500,
@@ -95,11 +105,17 @@ var Game = Class({
 
         //builders
         this._testDragableHead(140, 250, "./imgs/face_builder.png", {
-          builder: {
-            slot1: "unit1",
-            slot2: "unit2",
-            slot3: "unit3",
-          },
+          builder: [
+            {
+              unit: "unit1",
+            },
+            {
+              unit: "unit2",
+            },
+            {
+              unit: "unit3",
+            }
+          ],
           unitName: "Unit builder name",
           unitDesc: "This guy builds stuff",
           unitHealth: 100,
