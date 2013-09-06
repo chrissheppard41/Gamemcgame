@@ -15,8 +15,8 @@
             var config = {
                 oGameObj : document.getElementById('gameobj'),
                 bg       : 0x66FF99,
-                iWidth   : 1200,
-                iHeight  : 900
+                iWidth   : 1500,
+                iHeight  : 1500
             };
 
             var ui = new Ui();
@@ -30,6 +30,9 @@
 
                 ui.renderer.render(ui.stage);
                 game.renderer.render(game.stage);
+
+                //enable scrolling
+                ui.setScreenPos();
             }
         };
         -->

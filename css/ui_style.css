@@ -1,9 +1,15 @@
 #gameobj {
   height: 900px;
   position: relative;
-  width: 1200px; }
+  width: 1200px;
+  overflow: hidden; }
+  #gameobj canvas {
+    left: 0;
+    position: absolute;
+    top: 0; }
   #gameobj #ui_resources {
     background-color: #eeeeee;
+    display: none;
     height: 30px;
     left: 50%;
     line-height: 30px;
@@ -14,6 +20,7 @@
     z-index: 50; }
   #gameobj #ui_options {
     background-color: #eeeeee;
+    display: none;
     height: 30px;
     line-height: 30px;
     position: absolute;
@@ -23,6 +30,7 @@
     z-index: 50; }
   #gameobj #ui_buttonArea {
     background-color: #eeeeee;
+    display: none;
     bottom: 0;
     height: 250px;
     position: absolute;
@@ -31,6 +39,7 @@
     z-index: 50; }
   #gameobj #ui_unitInfo {
     background-color: #eeeeee;
+    display: none;
     bottom: 0;
     height: 200px;
     left: 50%;
@@ -66,17 +75,22 @@
         left: 150px;
         position: absolute;
         top: 0;
-        width: 400px; }
+        width: 500px; }
         #gameobj #ui_unitInfo #ui_unitCont #ui_unitInfoSection #ui_unitName {
           height: 30px;
-          margin: 20px;
-          width: 360px; }
+          margin: 10px 20px;
+          width: 460px; }
         #gameobj #ui_unitInfo #ui_unitCont #ui_unitInfoSection #ui_unitDescr {
-          height: 110px;
+          height: 80px;
           margin: 20px;
-          width: 360px; }
+          width: 460px; }
+        #gameobj #ui_unitInfo #ui_unitCont #ui_unitInfoSection #ui_playerName {
+          height: 30px;
+          margin: 10px 20px;
+          width: 460px; }
   #gameobj #ui_miniMap {
     background-color: #eeeeee;
+    display: none;
     bottom: 0;
     height: 250px;
     left: 0;

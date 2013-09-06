@@ -8,32 +8,121 @@
 
   var Ui = Class({
     initialize: function() {
-
+      var _this = this;
       this.config = {
-        resourceArea1:      document.getElementById('ui_resources'),
-        resourceArea2:      document.getElementById('ui_resources2'),
-        btnArea:            document.getElementById('ui_buttonArea'),
-        iWidth:             250,
-        iHeight:            250,
-        bg:                 "#dddddd",
-        buttonSlots:        3,
-        currentSelectedUnit: {}
+        gameobj:            document.getElementById('gameobj'),//grabs the canvas container
+        canvas:             document.getElementById('gameobj').getElementsByTagName("canvas"),//grabs the canvas from the container
+
+        ui_resourceArea:    document.getElementById('ui_resources'),//the resource element
+        ui_btnArea:         document.getElementById('ui_buttonArea'),//the button element
+        ui_unitInfo:        document.getElementById('ui_unitInfo'),//the unit information element
+        ui_miniMap:         document.getElementById('ui_miniMap'),//the minimap element
+
+        iWidth:             250,//the button area width
+        iHeight:            250,//the button area height
+        bg:                 "#dddddd",//background colour for the button area
+        buttonSlots:        3,//grid area(if = to 3 that would result with a 3x3 grid)
+        currentSelectedUnit: {},//the currently selected unit
+        screenPos: {//used to get the current screen position to the map
+          top:              0,
+          left:             0
+        },
+        scrollSpeed:        5//the speed of the scroll
       };
 
-      this.btnArray = [];
+      this.btnArray = [];//init. the button array
+      this._generateGrid();//draws the grid
+      this._drawUI();//draws the UI area
 
       //draw the pixi canvas
       if( this._ready() ) {
         // Set up scene
-        this.stage    = new PIXI.Stage(this.config.bg, true);
-        this.renderer  = PIXI.autoDetectRenderer(this.config.iWidth, this.config.iHeight, null);
+        this.stage      = this._stage();
+        this.renderer   = this._render();
 
         //requestAnimFrame( animate );
         // Start building game
-        this.config.btnArea.appendChild(this.renderer.view);
+        this.config.ui_btnArea.appendChild(this.renderer.view);
       }
 
-      this._generateGrid();
+      //set up listeniner for key detection
+      document.onkeydown = function(e) {
+        _this._keyDetection(e, _this);
+      };
+    },
+    /**
+      * _drawUI
+      * draws the UI interface on command
+      *
+      * @return null
+      **/
+    _drawUI: function() {
+      this.config.ui_resourceArea.style.display   = "block";
+      this.config.ui_btnArea.style.display        = "block";
+      this.config.ui_unitInfo.style.display       = "block";
+      this.config.ui_miniMap.style.display        = "block";
+    },
+    /**
+      * _keyDetection
+      * left right, up down
+      *
+      * @return null
+      **/
+    _keyDetection: function(e, _this) {
+      e = e || window.event;
+
+      var style = window.getComputedStyle(_this.config.gameobj, null);
+
+      if (e.keyCode == '37') {
+        if(_this.config.screenPos.left > (parseInt(style.getPropertyValue('width'),10)) - _this.config.canvas[1].getAttribute("width")) {
+          _this.config.screenPos.left -= _this.config.scrollSpeed;
+        }
+      }
+      if (e.keyCode == '38') {
+        if(_this.config.screenPos.top > (parseInt(style.getPropertyValue('height'),10)) - _this.config.canvas[1].getAttribute("height")) {
+          _this.config.screenPos.top  -= _this.config.scrollSpeed;
+        }
+      }
+      if (e.keyCode == '39') {
+        if(_this.config.screenPos.left < 0) {
+          _this.config.screenPos.left += _this.config.scrollSpeed;
+        }
+      }
+      if (e.keyCode == '40') {
+        if(_this.config.screenPos.top < 0) {
+          _this.config.screenPos.top  += _this.config.scrollSpeed;
+        }
+      }
+    },
+    /**
+      * setScreenPos
+      * Called in the animation area, the current position of the screen to the map
+      *
+      * @return null
+      **/
+    setScreenPos: function() {
+      this.config.canvas[1].style.left    = this.config.screenPos.left;
+      this.config.canvas[1].style.top     = this.config.screenPos.top;
+    },
+    /**
+      * _stage
+      * Creates a new Pixi stage
+      *
+      * @return stage (pixi)
+      **/
+    _stage: function() {
+      var stage = new PIXI.Stage(this.config.bg, true);
+      return stage;
+    },
+    /**
+      * _render
+      * Creates a new Pixi platform
+      *
+      * @return renderer (pixi)
+      **/
+    _render: function() {
+      var renderer = PIXI.autoDetectRenderer(this.config.iWidth, this.config.iHeight, null);
+      return renderer;
     },
     /**
       * public function draw
@@ -52,6 +141,7 @@
                     "  <div id='ui_unitHealth'>" + input.unitHealth + "/" + input.maxUnitHeath + "</div>" +
                     " </div>" +
                     " <div id='ui_unitInfoSection'>" +
+                    "  <div id='ui_playerName'>" + input.playerName + "</div>" +
                     "  <div id='ui_unitName'>" + input.unitName + "</div>" +
                     "  <div id='ui_unitDescr'>" + input.unitDesc + "</div>" +
                     " </div>" +
@@ -74,8 +164,8 @@
       **/
     _ready:function () {
         var bReady = true;
-        if ( !this.config.btnArea ) {
-            this._log( 'btnArea does not exist in DOM' );
+        if ( !this.config.ui_btnArea ) {
+            this._log( 'ui_btnArea does not exist in DOM' );
             bReady = false;
         }
         return bReady;
@@ -84,7 +174,6 @@
       * _generateGrid
       * Creates new button objects grid within a multidemional array
       *
-      * @pete removed @param slot (int) AS this.config.buttonSlots IS GLOBAL
       * @return null
       **/
     _generateGrid:function() {
@@ -111,15 +200,15 @@
         }
     },
     /**
-      * _clearUI
+      * clearUI
       * Clears the unit on a non interactive click
       *
       * @return null
       **/
-    _clearUI: function() {
-      //clear unit
-      //clear ui
-      console.log(clear);
+    clearUI: function() {
+      this._clearStage();
+      this.config.ui_unitInfo.innerHTML = "";
+      this.config.currentSelectedUnit = {};
     },
     /**
       * displayMenu
@@ -150,10 +239,10 @@
       * @return null
       **/
     handleResources: function(ui_input) {
-        if ( !this.config.resourceArea1 ) {
+        if ( !this.config.ui_resourceArea1 ) {
           console.log("Menu cannot be found!");
         }
-        this.config.resourceArea1.innerHTML = ui_input;
+        this.config.ui_resourceArea1.innerHTML = ui_input;
     },
     /**
       * _handleBuildOptions
@@ -198,38 +287,39 @@
       this._clearStage();
       //do a check for multiple selected units later
 
+      if(this.config.currentSelectedUnit.mine) {
+        //display buttons
+        //slot 0: attack
+        if(this.config.currentSelectedUnit.offense) {
+            this.btnArray[0].setVisiablity(true);
+            this.btnArray[0].setButtonAction(function(){
+              _this.btnArray[0].attack();
+            });
+        }
+        //slot 1: stop
+        //slot 2: move
+        if(this.config.currentSelectedUnit.move) {
+            this.btnArray[1].setVisiablity(true);
+            this.btnArray[1].setButtonAction(function(){
+              _this.btnArray[1].move();
+            });
+            this.btnArray[2].setVisiablity(true);
+            this.btnArray[2].setButtonAction(function(){
+              _this.btnArray[2].stop();
+            });
+        }
+        //slot 8: build menu
+        if(Object.keys(this.config.currentSelectedUnit.builder).length > 0) {
+            this.btnArray[8].setVisiablity(true);
+            this.btnArray[8].setButtonAction(function(){
+              _this.btnArray[8].buildOptions();
+              _this._handleBuildOptions();
+            });
+        }
 
-      //display buttons
-      //slot 0: attack
-      if(this.config.currentSelectedUnit.offense) {
-          this.btnArray[0].setVisiablity(true);
-          this.btnArray[0].setButtonAction(function(){
-            _this.btnArray[0].attack();
-          });
-      }
-      //slot 1: stop
-      //slot 2: move
-      if(this.config.currentSelectedUnit.move) {
-          this.btnArray[1].setVisiablity(true);
-          this.btnArray[1].setButtonAction(function(){
-            _this.btnArray[1].move();
-          });
-          this.btnArray[2].setVisiablity(true);
-          this.btnArray[2].setButtonAction(function(){
-            _this.btnArray[2].stop();
-          });
-      }
-      //slot 8: build menu
-      if(Object.keys(this.config.currentSelectedUnit.builder).length > 0) {
-          this.btnArray[8].setVisiablity(true);
-          this.btnArray[8].setButtonAction(function(){
-            _this.btnArray[8].buildOptions();
-            _this._handleBuildOptions();
-          });
-      }
-
-      for (var i = 0, t = this.config.buttonSlots*this.config.buttonSlots; i < t; i++) {
-          this.btnArray[i].displayBtn(this.stage);
+        for (var i = 0, t = this.config.buttonSlots*this.config.buttonSlots; i < t; i++) {
+            this.btnArray[i].displayBtn(this.stage);
+        }
       }
     },
     /**
@@ -268,35 +358,33 @@ var Button = Class({
     * @return null
     **/
   initialize: function(posX, posY) {
-    this.image        = "./imgs/btn.png";
+    this.image              = "./imgs/btn.png";
 
-    var texture       = PIXI.Texture.fromImage(this.image),
-        btn           = new PIXI.Sprite(texture);
-    btn.interactive   = true;
-    btn.buttonMode    = true;
-    btn.anchor.x      = 0;
-    btn.anchor.y      = 0;
+    var texture             = PIXI.Texture.fromImage(this.image);
+    this.btn                = new PIXI.Sprite(texture);
+    this.btn.interactive    = true;
+    this.btn.buttonMode     = true;
+    this.btn.anchor.x       = 0;
+    this.btn.anchor.y       = 0;
 
     // INTERACTIONS
-    btn.mousedown     = this.mouseDown;
-    btn.mouseup       = this.mouseup;
+    this.btn.mousedown      = this.mouseDown;
+    this.btn.mouseup        = this.mouseup;
 
     // START POS
-    btn.position.x    = 80 * posX;
-    btn.position.y    = 80 * posY;
+    this.btn.position.x     = 80 * posX;
+    this.btn.position.y     = 80 * posY;
 
-    btn.visible       = false;
-
-    this.masterBtn    = btn;
+    this.btn.visible        = false;
   },
   setVisiablity: function(vis) {
-    this.masterBtn.visible = vis;
+    this.btn.visible = vis;
   },
   getVisiablity: function() {
-    return this.masterBtn.visible;
+    return this.btn.visible;
   },
   setButtonAction: function(func){
-    this.masterBtn.mouseup = func;
+    this.btn.mouseup = func;
   },
   /**
     * mouseDown
@@ -335,7 +423,7 @@ var Button = Class({
     * @return null
     **/
   displayBtn: function(stage) {
-    stage.addChild(this.masterBtn);
+    stage.addChild(this.btn);
   },
   /**
     * toString
@@ -358,7 +446,7 @@ var Button = Class({
     **/
   attack: function(data, callback) {
     console.log("attack");
-    this.masterBtn.alpha = 1;
+    this.btn.alpha = 1;
     if(callback instanceof Function)
       callback();
   },
@@ -370,7 +458,7 @@ var Button = Class({
     **/
   move: function(data, callback) {
     console.log("move");
-    this.masterBtn.alpha = 1;
+    this.btn.alpha = 1;
     if(callback instanceof Function)
       callback();
   },
@@ -382,7 +470,7 @@ var Button = Class({
     **/
   stop: function(data, callback) {
     console.log("stop");
-    this.masterBtn.alpha = 1;
+    this.btn.alpha = 1;
     if(callback instanceof Function)
       callback();
   },
@@ -394,7 +482,7 @@ var Button = Class({
     **/
   buildOptions: function(data, callback) {
     console.log("buildOptions");
-    this.masterBtn.alpha = 1;
+    this.btn.alpha = 1;
     if(callback instanceof Function)
       callback();
   },
@@ -406,7 +494,7 @@ var Button = Class({
     **/
   back: function(data, callback) {
     console.log("back");
-    this.masterBtn.alpha = 1;
+    this.btn.alpha = 1;
     if(callback instanceof Function)
       callback();
   },
@@ -418,11 +506,9 @@ var Button = Class({
     **/
   build: function(data, callback) {
     console.log("build -> ", data);
-    this.masterBtn.alpha = 1;
+    this.btn.alpha = 1;
     if(callback instanceof Function)
       callback();
 
   }
 });
-
-//useful to know: array[] = []    ===    multidemional array

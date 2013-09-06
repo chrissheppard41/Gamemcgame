@@ -1,54 +1,61 @@
 #gameobj {
-	height: 900px;
-	position: relative;
-	width: 1200px;
+	height: 	900px;
+	position: 	relative;
+	width: 		1200px;
+	overflow: 	hidden;
+
+	canvas {
+		left: 		0;
+		position: 	absolute;
+		top: 		0;
+	}
 
 	#ui_resources {
-		background-color: #eeeeee;
-		height: 30px;
-		left: 50%;
-		line-height: 30px;
-		margin-left: -125px;
-		position: absolute;
-		top: 0px;
-		width: 250px;
-
-		z-index: 50;
+		background-color: 	#eeeeee;
+		display: 			none;
+		height: 			30px;
+		left: 				50%;
+		line-height: 		30px;
+		margin-left: 		-125px;
+		position: 			absolute;
+		top: 				0px;
+		width: 				250px;
+		z-index: 			50;
 	}
 
 	#ui_options {
-		background-color: #eeeeee;
-		height: 30px;
-		line-height: 30px;
-		position: absolute;
-		right: 0;
-		top: 0;
-		width: 100px;
-
-		z-index: 50;
+		background-color: 	#eeeeee;
+		display: 			none;
+		height: 			30px;
+		line-height: 		30px;
+		position: 			absolute;
+		right: 				0;
+		top: 				0;
+		width: 				100px;
+		z-index: 			50;
 	}
 
 	#ui_buttonArea {
-		background-color: #eeeeee;
-		bottom: 0;
-		height: 250px;
-		position: absolute;
-		right: 0;
-		width: 250px;
-
-		z-index: 50;
+		background-color: 	#eeeeee;
+		display: 			none;
+		bottom: 			0;
+		height: 			250px;
+		position: 			absolute;
+		right: 				0;
+		width: 				250px;
+		z-index: 			50;
 	}
 
 	#ui_unitInfo {
-		background-color: #eeeeee;
-		bottom: 0;
-		height: 200px;
-		left: 50%;
-		margin-left: -325px;
-		position: absolute;
-		width: 650px;
-
-		z-index: 50;
+		background-color: 	#eeeeee;
+		display: 			none;
+		bottom: 			0;
+		height: 			200px;
+		left: 				50%;
+		margin-left: 		-325px;
+		position: 			absolute;
+		width: 				650px;
+		z-index: 			50;
 
 		#ui_unitCont {
 			height: 200px;
@@ -85,32 +92,39 @@
 				left: 150px;
 				position: absolute;
 				top: 0;
-				width: 400px;
+				width: 500px;
 
 				#ui_unitName {
 					height: 30px;
-					margin: 20px;
-					width: 360px;
+					margin: 10px 20px;
+					width: 460px;
 				}
 
 				#ui_unitDescr {
-					height: 110px;
+					height: 80px;
 					margin: 20px;
-					width: 360px;
+					width: 460px;
+				}
+
+				#ui_playerName {
+					height: 30px;
+					margin: 10px 20px;
+					width: 460px;
 				}
 			}
 		}
 	}
 
 	#ui_miniMap {
-		background-color: #eeeeee;
-		bottom: 0;
-		height: 250px;
-		left: 0;
-		position: absolute;
-		width: 250px;
+		background-color: 	#eeeeee;
+		display: 			none;
+		bottom: 			0;
+		height: 			250px;
+		left: 				0;
+		position: 			absolute;
+		width: 				250px;
 
-		z-index: 50;
+		z-index: 			50;
 	}
 
 

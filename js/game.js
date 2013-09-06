@@ -23,6 +23,9 @@ var Game = Class({
           // Set up scene
           this.stage = this._setStage();
           this.renderer = this._renderer();
+          this.stage.click = function(e) {
+            ui.clearUI();
+          };
 
           // Start building game
           this._mountRenderer(this.renderer.view);
@@ -50,18 +53,21 @@ var Game = Class({
 
         //combat units
         this._testDragableHead(20, 20, "./imgs/face.png", {
-          builder: {},
-          unitName: "Test name",
-          unitDesc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vitae quam sit amet sapien hendrerit aliquam.",
-          unitHealth: 200,
-          maxUnitHeath: 200,
-          level: 1,
-          move: true,
-          offense: true,
-          img: "#noimage",
+          builder: {},//list of units this unit can build
+          playerName: "#player_name",//name of the player
+          unitName: "Test name",//name of the unit
+          unitDesc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vitae quam sit amet sapien hendrerit aliquam.",//description
+          unitHealth: 200,//current health of the unit
+          maxUnitHeath: 200,//max health of the unit
+          level: 1,//current level of the unit
+          move: true,//can the unit move?
+          offense: true,//does th eunit have offensive abilities
+          img: "#noimage",//the image of the unit
+          mine: true,//does this unit belong to me?
         });
         this._testDragableHead(100, 50, "./imgs/face.png", {
           builder: {},
+          playerName: "#player_name",
           unitName: "Test name 2",
           unitDesc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vitae quam sit amet sapien hendrerit aliquam. Does some really cool actions of kick-ass-ery",
           unitHealth: 200,
@@ -70,6 +76,7 @@ var Game = Class({
           move: true,
           offense: true,
           img: "#noimage",
+          mine: true,
         });
 
 
@@ -92,6 +99,7 @@ var Game = Class({
               unit: "unit5",
             }
           ],
+          playerName: "#player_name",
           unitName: "Building name",
           unitDesc: "Fort kick ass",
           unitHealth: 1500,
@@ -100,6 +108,7 @@ var Game = Class({
           move: false,
           offense: false,
           img: "#noimage",
+          mine: true,
         });
 
 
@@ -116,6 +125,7 @@ var Game = Class({
               unit: "unit3",
             }
           ],
+          playerName: "#player_name",
           unitName: "Unit builder name",
           unitDesc: "This guy builds stuff",
           unitHealth: 100,
@@ -124,6 +134,33 @@ var Game = Class({
           move: true,
           offense: false,
           img: "#noimage",
+          mine: true,
+        });
+
+
+
+        this._testDragableHead(150, 200, "./imgs/face_enemy.png", {
+          builder: [
+            {
+              unit: "unit1",
+            },
+            {
+              unit: "unit2",
+            },
+            {
+              unit: "unit3",
+            }
+          ],
+          playerName: "#player_name2",
+          unitName: "Test name 2 enemy",
+          unitDesc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vitae quam sit amet sapien hendrerit aliquam. Does some really cool actions of kick-ass-ery",
+          unitHealth: 200,
+          maxUnitHeath: 200,
+          level: 1,
+          move: true,
+          offense: true,
+          img: "#noimage",
+          mine: false,
         });
     },
 
