@@ -34,17 +34,6 @@
       this._generateGrid();//draws the grid
       this._drawUI();//draws the UI area
 
-      //draw the pixi canvas
-      if( this._ready() ) {
-        // Set up scene
-        this.stage      = this._stage();
-        this.renderer   = this._render();
-
-        //requestAnimFrame( animate );
-        // Start building game
-        this.config.ui_btnArea.appendChild(this.renderer.view);
-      }
-
       //set up listeniner for key detection
       document.onkeydown = function(e) {
         _this._keyDetection(e, _this);
@@ -74,23 +63,23 @@
       var style = window.getComputedStyle(_this.config.gameobj, null);
 
       if (e.keyCode == '37') {
-        if(_this.config.screenPos.left > (parseInt(style.getPropertyValue('width'),10)) - _this.config.canvas[1].getAttribute("width")) {
-          _this.config.screenPos.left -= _this.config.scrollSpeed;
-        }
-      }
-      if (e.keyCode == '38') {
-        if(_this.config.screenPos.top > (parseInt(style.getPropertyValue('height'),10)) - _this.config.canvas[1].getAttribute("height")) {
-          _this.config.screenPos.top  -= _this.config.scrollSpeed;
-        }
-      }
-      if (e.keyCode == '39') {
         if(_this.config.screenPos.left < 0) {
           _this.config.screenPos.left += _this.config.scrollSpeed;
         }
       }
-      if (e.keyCode == '40') {
+      if (e.keyCode == '38') {
         if(_this.config.screenPos.top < 0) {
           _this.config.screenPos.top  += _this.config.scrollSpeed;
+        }
+      }
+      if (e.keyCode == '39') {
+        if(_this.config.screenPos.left > (parseInt(style.getPropertyValue('width'),10)) - _this.config.canvas[0].getAttribute("width")) {
+          _this.config.screenPos.left -= _this.config.scrollSpeed;
+        }
+      }
+      if (e.keyCode == '40') {
+        if(_this.config.screenPos.top > (parseInt(style.getPropertyValue('height'),10)) - _this.config.canvas[0].getAttribute("height")) {
+          _this.config.screenPos.top  -= _this.config.scrollSpeed;
         }
       }
     },
@@ -101,28 +90,8 @@
       * @return null
       **/
     setScreenPos: function() {
-      this.config.canvas[1].style.left    = this.config.screenPos.left;
-      this.config.canvas[1].style.top     = this.config.screenPos.top;
-    },
-    /**
-      * _stage
-      * Creates a new Pixi stage
-      *
-      * @return stage (pixi)
-      **/
-    _stage: function() {
-      var stage = new PIXI.Stage(this.config.bg, true);
-      return stage;
-    },
-    /**
-      * _render
-      * Creates a new Pixi platform
-      *
-      * @return renderer (pixi)
-      **/
-    _render: function() {
-      var renderer = PIXI.autoDetectRenderer(this.config.iWidth, this.config.iHeight, null);
-      return renderer;
+      this.config.canvas[0].style.left    = this.config.screenPos.left;
+      this.config.canvas[0].style.top     = this.config.screenPos.top;
     },
     /**
       * public function draw
@@ -177,15 +146,8 @@
       * @return null
       **/
     _generateGrid:function() {
-      var j = 0, k = 0;
       for (var i = 0, t = this.config.buttonSlots*this.config.buttonSlots; i < t; i++) {
-        this.btnArray[i] = new Button(j, k);
-
-        if((i+1) % 3 === 0) {
-          k++; j = 0;
-        } else {
-          j++;
-        }
+        this.btnArray[i] = new Button(i);
       }
     },
     /**
@@ -256,6 +218,7 @@
 
       //slot 8: back button
       this.btnArray[8].setVisiablity(true);
+      this.btnArray[8].setName("imgs/btn_ba.png");
       this.btnArray[8].setButtonAction(function(){
         _this.btnArray[8].back();
         _this._handleUnitOptions();
@@ -265,6 +228,7 @@
         //console.log(this.config.currentSelectedUnit.builder[i]);
         if(this.config.currentSelectedUnit.builder[i] !== undefined || t < 8) {
           this.btnArray[i].setVisiablity(true);
+          this.btnArray[i].setName(this.config.currentSelectedUnit.builder[i].btn);
           //fixing the closure loop problem
           function handler(n) {
             _this.btnArray[n].setButtonAction(function(){
@@ -273,7 +237,7 @@
           }
           handler(i);
         }
-          this.btnArray[i].displayBtn(this.stage);
+          this.btnArray[i].draw(this.config.ui_btnArea);
       }
     },
     /**
@@ -292,6 +256,7 @@
         //slot 0: attack
         if(this.config.currentSelectedUnit.offense) {
             this.btnArray[0].setVisiablity(true);
+            this.btnArray[0].setName("imgs/btn_a.png");
             this.btnArray[0].setButtonAction(function(){
               _this.btnArray[0].attack();
             });
@@ -300,10 +265,12 @@
         //slot 2: move
         if(this.config.currentSelectedUnit.move) {
             this.btnArray[1].setVisiablity(true);
+            this.btnArray[1].setName("imgs/btn_m.png");
             this.btnArray[1].setButtonAction(function(){
               _this.btnArray[1].move();
             });
             this.btnArray[2].setVisiablity(true);
+            this.btnArray[2].setName("imgs/btn_s.png");
             this.btnArray[2].setButtonAction(function(){
               _this.btnArray[2].stop();
             });
@@ -311,6 +278,7 @@
         //slot 8: build menu
         if(Object.keys(this.config.currentSelectedUnit.builder).length > 0) {
             this.btnArray[8].setVisiablity(true);
+            this.btnArray[8].setName("imgs/btn_b.png");
             this.btnArray[8].setButtonAction(function(){
               _this.btnArray[8].buildOptions();
               _this._handleBuildOptions();
@@ -318,7 +286,7 @@
         }
 
         for (var i = 0, t = this.config.buttonSlots*this.config.buttonSlots; i < t; i++) {
-            this.btnArray[i].displayBtn(this.stage);
+            this.btnArray[i].draw(this.config.ui_btnArea);
         }
       }
     },
@@ -357,34 +325,41 @@ var Button = Class({
     * @param posX, posY
     * @return null
     **/
-  initialize: function(posX, posY) {
-    this.image              = "./imgs/btn.png";
-
-    var texture             = PIXI.Texture.fromImage(this.image);
-    this.btn                = new PIXI.Sprite(texture);
-    this.btn.interactive    = true;
-    this.btn.buttonMode     = true;
-    this.btn.anchor.x       = 0;
-    this.btn.anchor.y       = 0;
-
-    // INTERACTIONS
-    this.btn.mousedown      = this.mouseDown;
-    this.btn.mouseup        = this.mouseup;
-
-    // START POS
-    this.btn.position.x     = 80 * posX;
-    this.btn.position.y     = 80 * posY;
-
-    this.btn.visible        = false;
+  initialize: function(pid) {
+    //create element
+    //add listener add default click with a callback
+    this.id = pid;
+    this.btn = document.createElement("input");
+    this.btn.type = "image";
+    this.btn.id = "grid" + pid;
+    this.btn.innerHTML = pid;
+    this.btn.onmousedown = this.mouseDown;
+    this.btn.onmouseup = this.mouseUp;
+  },
+  /**
+    * draw
+    * Writes button to the area stage
+    *
+    * @return null
+    **/
+  draw: function(area) {
+    area.appendChild(this.btn);
   },
   setVisiablity: function(vis) {
-    this.btn.visible = vis;
+    if(vis)
+      this.btn.style.display = "block";
+    else
+      this.btn.style.display = "none";
+
   },
   getVisiablity: function() {
-    return this.btn.visible;
+    return this.btn.style.display;
   },
   setButtonAction: function(func){
-    this.btn.mouseup = func;
+    this.btn.onmouseup = func;
+  },
+  setName: function(name) {
+    this.btn.src = name;
   },
   /**
     * mouseDown
@@ -392,19 +367,19 @@ var Button = Class({
     *
     * @return null
     **/
-  mouseDown: function(data) {
+  mouseDown: function(e) {
     //this.data = data;
-    this.alpha        = 0.5;
+    //console.log("down");
   },
   /**
-    * mouseup
+    * mouseUp
     * default mouse up functiopnality
     *
     * @return null
     **/
-  mouseup: function(data) {
+  mouseUp: function(e) {
     //this.data = data;
-    this.alpha        = 1;
+    //console.log("up");
   },
   /**
     * mousehover
@@ -412,18 +387,9 @@ var Button = Class({
     *
     * @return null
     **/
-  mousehover: function(data) {
+  mousehover: function(e) {
     //this.data = data;
     this.alpha        = 0.7;
-  },
-  /**
-    * displayBtn
-    * Writes button to the canvas stage
-    *
-    * @return null
-    **/
-  displayBtn: function(stage) {
-    stage.addChild(this.btn);
   },
   /**
     * toString

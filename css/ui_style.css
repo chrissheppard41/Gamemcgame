@@ -37,6 +37,10 @@
     right: 0;
     width: 250px;
     z-index: 50; }
+    #gameobj #ui_buttonArea input {
+      float: left;
+      height: 80px;
+      width: 80px; }
   #gameobj #ui_unitInfo {
     background-color: #eeeeee;
     display: none;

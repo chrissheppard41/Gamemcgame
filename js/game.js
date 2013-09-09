@@ -85,18 +85,23 @@ var Game = Class({
           builder: [
             {
               unit: "unit1",
+              btn: "imgs/btn_u1.png",
             },
             {
               unit: "unit2",
+              btn: "imgs/btn_u2.png",
             },
             {
               unit: "unit3",
+              btn: "imgs/btn_u3.png",
             },
             {
               unit: "unit4",
+              btn: "imgs/btn_u4.png",
             },
             {
               unit: "unit5",
+              btn: "imgs/btn_u5.png",
             }
           ],
           playerName: "#player_name",
@@ -117,12 +122,15 @@ var Game = Class({
           builder: [
             {
               unit: "unit1",
+              btn: "imgs/btn_u1.png",
             },
             {
               unit: "unit2",
+              btn: "imgs/btn_u2.png",
             },
             {
               unit: "unit3",
+              btn: "imgs/btn_u3.png",
             }
           ],
           playerName: "#player_name",
